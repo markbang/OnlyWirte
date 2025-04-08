@@ -1,7 +1,21 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { useEffect } from 'react';
+import { checkForAppUpdates } from '@/lib/updater';
 
 export default function Home() {
+  // 使用 useEffect 在组件挂载时检查更新
+  useEffect(() => {
+    checkForAppUpdates(false);
+  }, []);
+
+  // 处理点击检查更新按钮
+  const handleCheckUpdate = () => {
+    checkForAppUpdates(false);
+  };
+
   return (
     <>
       <header className='flex flex-col items-center justify-center bg-gray-100'>
@@ -21,8 +35,12 @@ export default function Home() {
           <Button variant='default' className='w-48'>
             <a href='/docs/getting-started'>Getting Started</a>
           </Button>
-          <Button variant='secondary' className='w-48'>
-            <a href='/docs/api'>API Reference</a>
+          <Button
+            variant='secondary'
+            className='w-48'
+            onClick={handleCheckUpdate}
+          >
+            检查更新
           </Button>
           <Button variant='link' className='w-48'>
             <a href='/login'>登录</a>
