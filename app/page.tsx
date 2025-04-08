@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { checkForAppUpdates } from '@/lib/updater';
 
 export default function Home() {
@@ -11,10 +11,7 @@ export default function Home() {
     checkForAppUpdates(false);
   }, []);
 
-  // 处理点击检查更新按钮
-  const handleCheckUpdate = () => {
-    checkForAppUpdates(true);
-  };
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
 
   return (
     <>
@@ -38,9 +35,22 @@ export default function Home() {
           <Button
             variant='secondary'
             className='w-48'
-            onClick={handleCheckUpdate}
+            onClick={() => {
+              setIsCheckingUpdate(true);
+              checkForAppUpdates(true).finally(() => {
+                setIsCheckingUpdate(false);
+              });
+            }}
+            disabled={isCheckingUpdate}
           >
-            检查更新
+            {isCheckingUpdate ? (
+              <>
+                <span className='mr-2 h-4 w-4 animate-spin'>◌</span>
+                检查中...
+              </>
+            ) : (
+              '检查更新'
+            )}
           </Button>
           <Button variant='link' className='w-48'>
             <a href='/login'>登录</a>
