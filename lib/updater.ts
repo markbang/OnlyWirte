@@ -3,10 +3,17 @@ import { check } from '@tauri-apps/plugin-updater';
 import { ask, message } from '@tauri-apps/plugin-dialog';
 import { relaunch } from '@tauri-apps/plugin-process';
 
-export async function checkForAppUpdates(onUserClick: false) {
+export async function checkForAppUpdates(onUserClick: boolean) {
   const update = await check();
   if (!update) {
     console.log('No update available');
+    if (onUserClick) {
+      await message('You are on the latest version. Stay awesome!', {
+        title: 'No Update Available',
+        kind: 'info',
+        okLabel: 'OK',
+      });
+    }
   } else if (update) {
     console.log('Update available!', update.version, update.body);
     const yes = await ask(

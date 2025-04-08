@@ -13,7 +13,7 @@ export default function Home() {
 
   // 处理点击检查更新按钮
   const handleCheckUpdate = () => {
-    checkForAppUpdates(false);
+    checkForAppUpdates(true);
   };
 
   return (
