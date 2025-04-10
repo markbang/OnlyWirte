@@ -60,12 +60,15 @@
   "app": {
     "windows": [
       {
+        "center": true,
         "fullscreen": false,
         "height": 600,
+        "hiddenTitle": true,
         "resizable": true,
-        "title": "仅记-onlywrite",
+        "title": "OnlyWrite",
         "width": 800,
-        "useHttpsScheme": true
+        "useHttpsScheme": true,
+        "titleBarStyle": "Transparent"
       }
     ],
     "security": {
