@@ -4,20 +4,51 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { checkForAppUpdates } from '@/lib/updater';
-import { getversion } from '@/lib/utils';
+
+import { invoke } from '@tauri-apps/api/core';
+import { message } from '@tauri-apps/plugin-dialog';
+import { useTauriAppVersion, useTauriOsType } from '@/hooks/useTauriApp';
 
 export default function Home() {
-  // 使用 useEffect 在组件挂载时检查更新
+  const appVersion = useTauriAppVersion();
+  const osType = useTauriOsType();
+
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+  // 新增状态追踪 scoop 更新过程
+  const [isUpdatingScoop, setIsUpdatingScoop] = useState(false);
+
+  // 使用 useEffect 在组件挂载时检查更新和获取操作系统类型
   useEffect(() => {
     checkForAppUpdates(false);
   }, []);
 
-  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+  // 将 scoopUpdate 移动到组件内部
+  const scoopUpdate = () => {
+    if (osType !== 'windows') {
+      message('仅支持 Windows 系统的 Scoop 更新');
+      return;
+    }
+    setIsUpdatingScoop(true);
+    invoke('scoop_update')
+      .then(() => {
+        message('Scoop 更新完成');
+      })
+      .catch((error) => {
+        console.error(error);
+        message('更新失败，请检查 Scoop 是否安装');
+      })
+      .finally(() => {
+        setIsUpdatingScoop(false);
+      });
+  };
 
   return (
     <div className='flex h-screen flex-col bg-slate-50'>
       {/* 顶部导航栏 */}
-      <header className='flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3'>
+      <header
+        className='flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3'
+        data-tauri-drag-region
+      >
         <div className='flex items-center gap-3'>
           <Image
             src='/app-icon.svg'
@@ -29,6 +60,21 @@ export default function Home() {
           <h1 className='text-xl font-semibold text-slate-800'>OnlyWrite</h1>
         </div>
         <div className='flex items-center gap-2'>
+          <Button
+            variant='ghost'
+            size='sm'
+            onClick={scoopUpdate}
+            disabled={isUpdatingScoop}
+          >
+            {isUpdatingScoop ? (
+              <>
+                <span className='mr-2 h-4 w-4 animate-spin'>◌</span>
+                更新中...
+              </>
+            ) : (
+              'Update Scoop App'
+            )}
+          </Button>
           <Button variant='ghost' size='sm'>
             帮助
           </Button>
@@ -306,7 +352,7 @@ export default function Home() {
       <footer className='border-t border-slate-200 bg-white px-6 py-2 text-sm text-slate-500'>
         <div className='flex items-center justify-between'>
           <span>© {new Date().getFullYear()} OnlyWrite</span>
-          <span>版本 {getversion()}</span>
+          <span>版本 {appVersion.version}</span>
         </div>
       </footer>
     </div>

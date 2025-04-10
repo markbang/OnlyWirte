@@ -4,11 +4,16 @@
   "description": "Capability for the main window",
   "windows": ["main"],
   "permissions": [
-    "dialog:allow-open",
-    "dialog:allow-save",
     "dialog:default",
-    "dialog:allow-ask",
-    "dialog:allow-confirm",
-    "dialog:allow-message"
+    "core:default",
+    "core:window:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-maximize",
+    "core:window:allow-minimize",
+    "core:window:allow-close",
+    "core:window:allow-unmaximize",
+    "os:default",
+    "os:allow-os-type",
+    "os:allow-platform"
   ]
 }
